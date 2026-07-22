@@ -1,0 +1,225 @@
+---
+title: "Customer Conversion Dashboard"
+author: "Grace Sen"
+format:
+  dashboard:
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+library(tidyverse)
+library(scales)
+
+marketing <- read_csv("digital_marketing_campaign_dataset.csv")
+```
+
+# Overview
+
+## Total Customers
+
+```{r}
+#| content: valuebox
+
+nrow(marketing)
+```
+
+## Conversion Rate
+
+```{r}
+#| content: valuebox
+
+scales::percent(mean(marketing$Conversion))
+```
+
+This dashboard summarizes customer demographics, campaign performance, customer engagement, email marketing, and purchase history to identify factors associated with customer conversion.
+
+# Customer Demographics
+
+## Age Distribution
+
+```{r}
+ggplot(marketing, aes(x = Age)) +
+  geom_histogram(
+    bins = 20,
+    fill = "lightblue",
+    color = "white"
+  ) +
+  labs(
+    title = "Age Distribution",
+    x = "Age",
+    y = "Number of Customers"
+  ) +
+  theme_minimal()
+```
+
+## Income by Conversion
+
+```{r}
+ggplot(marketing,
+       aes(x = factor(Conversion),
+           y = Income)) +
+  geom_boxplot(fill = "lightblue3") +
+  labs(
+    title = "Income by Conversion",
+    x = "Conversion",
+    y = "Income"
+  ) +
+  theme_minimal()
+```
+
+# Marketing Campaign
+
+## Campaign Type
+
+```{r}
+ggplot(marketing,
+       aes(x = CampaignType)) +
+  geom_bar(fill = "lightblue") +
+  labs(
+    title = "Campaign Type Distribution",
+    x = "Campaign Type",
+    y = "Count"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45,
+                                   hjust = 1))
+```
+
+## Conversion by Campaign
+
+```{r}
+ggplot(marketing,
+       aes(x = CampaignType,
+           fill = factor(Conversion))) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(
+    values = c(
+      "0" = "lightblue",
+      "1" = "lightsteelblue3"
+    )
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Conversion Rate by Campaign",
+    x = "Campaign Type",
+    y = "Proportion",
+    fill = "Conversion"
+  ) +
+  theme_minimal()
+```
+
+# Customer Engagement
+
+## Website Visits vs Time on Site
+
+```{r}
+ggplot(marketing,
+       aes(x = WebsiteVisits,
+           y = TimeOnSite,
+           color = factor(Conversion))) +
+  geom_point(alpha = 0.25,
+             size = 1.2) +
+  scale_color_manual(
+    values = c(
+      "0" = "lightblue",
+      "1" = "steelblue3"
+    )
+  ) +
+  labs(
+    title = "Website Visits vs Time on Site",
+    x = "Website Visits",
+    y = "Time on Site",
+    color = "Conversion"
+  ) +
+  theme_minimal()
+```
+
+## Website Visits by Conversion
+
+```{r}
+ggplot(marketing,
+       aes(x = factor(Conversion),
+           y = WebsiteVisits)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Website Visits by Conversion",
+    x = "Conversion",
+    y = "Website Visits"
+  ) +
+  theme_minimal()
+```
+
+# Email Marketing
+
+## Email Opens vs Clicks
+
+```{r}
+ggplot(marketing,
+       aes(x = EmailOpens,
+           y = EmailClicks,
+           color = factor(Conversion))) +
+  geom_point(alpha = 0.6) +
+  scale_color_manual(
+    values = c(
+      "0" = "steelblue",
+      "1" = "lightblue"
+    )
+  ) +
+  labs(
+    title = "Email Opens vs Email Clicks",
+    x = "Email Opens",
+    y = "Email Clicks",
+    color = "Conversion"
+  ) +
+  theme_minimal()
+```
+
+# Purchase History
+
+## Previous Purchases
+
+```{r}
+ggplot(marketing,
+       aes(x = PreviousPurchases)) +
+  geom_histogram(
+    bins = 15,
+    fill = "lightblue",
+    color = "white"
+  ) +
+  labs(
+    title = "Previous Purchases",
+    x = "Previous Purchases",
+    y = "Customers"
+  ) +
+  theme_minimal()
+```
+
+## Loyalty Points
+
+```{r}
+ggplot(marketing,
+       aes(x = LoyaltyPoints,
+           fill = factor(Conversion))) +
+  geom_histogram(
+    bins = 20,
+    alpha = 0.8,
+    position = "dodge",
+    color = "white"
+  ) +
+  scale_fill_manual(
+    values = c(
+      "0" = "lightblue4",
+      "1" = "lightblue"
+    )
+  ) +
+  labs(
+    title = "Loyalty Points",
+    x = "Loyalty Points",
+    fill = "Conversion"
+  ) +
+  theme_minimal()
+```
